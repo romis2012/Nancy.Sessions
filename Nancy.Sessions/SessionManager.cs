@@ -5,12 +5,12 @@ namespace Nancy.Session
 {
     public class SessionManager
     {
-        private readonly ISessionStore _store;
+        private readonly ISessionProvider _provider;
         public event Action<ISession> SessionStart;
 
-        public SessionManager(ISessionStore store)
+        public SessionManager(ISessionProvider provider)
         {
-            _store = store;
+            _provider = provider;
         }
 
         public void Run(IPipelines pipelines)
@@ -21,7 +21,7 @@ namespace Nancy.Session
             {
                 pipelines.BeforeRequest.AddItemToEndOfPipeline(context =>
                 {
-                    if (_store.Expired(context))
+                    if (_provider.Expired(context))
                     {
                         SessionStart(context.Request.Session);
                     }
@@ -32,7 +32,7 @@ namespace Nancy.Session
 
         private void SaveSession(NancyContext context)
         {
-            _store.Save(context);
+            _provider.Save(context);
         }
 
         private Response LoadSession(NancyContext context)
@@ -42,7 +42,7 @@ namespace Nancy.Session
                 return null;
             }
 
-            context.Request.Session = _store.Load(context);
+            context.Request.Session = _provider.Load(context);
 
             return null;
         }

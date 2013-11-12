@@ -43,8 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ISessionStore.cs" />
-    <Compile Include="MemorySessionStore.cs" />
+    <Compile Include="ISessionProvider.cs" />
+    <Compile Include="MemorySessionProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SessionManager.cs" />
   </ItemGroup>

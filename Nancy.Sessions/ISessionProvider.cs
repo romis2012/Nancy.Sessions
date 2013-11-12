@@ -1,6 +1,6 @@
 ﻿namespace Nancy.Session
 {
-    public interface ISessionStore
+    public interface ISessionProvider
     {
         void Save(NancyContext context);
         ISession Load(NancyContext context);

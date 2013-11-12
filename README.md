@@ -2,7 +2,7 @@
 ==============
 
 Session providers for Nancy web framework.
-Currently, the MemorySession supported.
+Currently, the MemorySessionProvider supported.
 
 Usage:
 
@@ -13,7 +13,7 @@ public class Bootstrapper : DefaultNancyBootstrapper
 	{
 		base.ApplicationStartup(container, pipelines);
 		
-		var sessioonManager = new SessionManager(new MemorySessionStore());
+		var sessioonManager = new SessionManager(new MemorySessionProvider());
 		sessioonManager.SessionStart += SessionStart;
 		sessioonManager.Run(pipelines);
 	}

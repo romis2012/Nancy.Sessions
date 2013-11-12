@@ -5,19 +5,19 @@ using Nancy.Cookies;
 
 namespace Nancy.Session
 {
-    public class MemorySessionStore : ISessionStore
+    public class MemorySessionProvider : ISessionProvider
     {
         private readonly ObjectCache _cache = MemoryCache.Default;
         public string CookieName { get; set; }
         public int Timeout { get; set; }
 
-        public MemorySessionStore(string cookieName, int timeout)
+        public MemorySessionProvider(string cookieName, int timeout)
         {
             CookieName = cookieName;
             Timeout = timeout;
         }
 
-        public MemorySessionStore(): this("_sessionId", 20)
+        public MemorySessionProvider(): this("_sessionId", 20)
         {
         }
 
