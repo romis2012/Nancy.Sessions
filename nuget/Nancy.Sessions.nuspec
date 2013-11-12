@@ -5,7 +5,7 @@
     <version>1.0.0</version>
     <authors>romis2012</authors>
     <owners>romis2012</owners>
-    <projectUrl>https://github.com/romis2012/NHibernate.Caches.SysCache3</projectUrl>
+    <projectUrl>https://github.com/romis2012/Nancy.Sessions</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Session providers for Nancy web framework. Currently, the MemorySessionProvider supported.</description>
     <releaseNotes>MemorySessionProvider supported</releaseNotes>
