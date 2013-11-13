@@ -8,6 +8,7 @@
     <projectUrl>https://github.com/romis2012/Nancy.Sessions</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Session providers for Nancy web framework. Currently, the MemorySessionProvider supported.</description>
+	<summary>Session providers for Nancy web framework. Currently, the MemorySessionProvider supported. SessionStart and SessionEnd events supported.</summary>
     <releaseNotes>Added SessionEnd event</releaseNotes>
     <copyright>Copyright 2013</copyright>
     <tags>Nancy</tags>
