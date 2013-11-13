@@ -15,12 +15,18 @@ public class Bootstrapper : DefaultNancyBootstrapper
 		
 		var sessioonManager = new SessionManager(new MemorySessionProvider());
 		sessioonManager.SessionStart += SessionStart;
+		sessioonManager.SessionEnd += SessionEnd;
 		sessioonManager.Run(pipelines);
 	}
 
 	private static void SessionStart(ISession session)
 	{
 		//session start code here
+	}
+	
+	private static void SessionEnd(ISession session)
+	{
+		//session end code here
 	}
 }
 ```

@@ -11,6 +11,16 @@ namespace Nancy.Session
         public string CookieName { get; set; }
         public int Timeout { get; set; }
 
+        public event Action<ISession> SessionEnd;
+        protected virtual void OnSessionEnd(ISession obj)
+        {
+            Action<ISession> handler = SessionEnd;
+            if (handler != null)
+            {
+                handler(obj);
+            }
+        }
+
         public MemorySessionProvider(string cookieName, int timeout)
         {
             CookieName = cookieName;
@@ -76,9 +86,21 @@ namespace Nancy.Session
 
         private void SaveToStore(string key, IDictionary<string, object> value)
         {
-            var policy = new CacheItemPolicy {SlidingExpiration = new TimeSpan(0, 0, Timeout, 0)};   
+            var policy = new CacheItemPolicy {SlidingExpiration = new TimeSpan(0, 0, Timeout, 0)};
+            policy.RemovedCallback += args =>
+            {
+                if (args.RemovedReason == CacheEntryRemovedReason.Expired)
+                {
+                    var item = args.CacheItem.Value as IDictionary<string, object>;
+                    if (item != null)
+                    {
+                        OnSessionEnd(new Session(item));
+                    }
+                }
+            };
             _cache.Set(key, value, policy);
         }
+
 
         private bool CookiePassed(NancyContext context)
         {

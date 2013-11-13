@@ -5,8 +5,22 @@ namespace Nancy.Session
 {
     public class SessionManager
     {
+        
         private readonly ISessionProvider _provider;
+        //todo: consider delegate SessionStart responsibility to ISessionProvider
         public event Action<ISession> SessionStart;
+        
+        public event Action<ISession> SessionEnd
+        {
+            add
+            {
+                _provider.SessionEnd += value;
+            }
+            remove
+            {
+                _provider.SessionEnd -= value;
+            }
+        }
 
         public SessionManager(ISessionProvider provider)
         {
