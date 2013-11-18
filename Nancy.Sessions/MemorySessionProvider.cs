@@ -11,6 +11,17 @@ namespace Nancy.Session
         public string CookieName { get; set; }
         public int Timeout { get; set; }
 
+        public event Action<ISession> SessionStart;
+
+        protected virtual void OnSessionStart(ISession obj)
+        {
+            Action<ISession> handler = SessionStart;
+            if (handler != null)
+            {
+                handler(obj);
+            }
+        }
+
         public event Action<ISession> SessionEnd;
         protected virtual void OnSessionEnd(ISession obj)
         {
@@ -39,20 +50,15 @@ namespace Nancy.Session
                 return;
             }
 
-            string sessionId;
+            var sessionId = SessionIdFromCookie(context);
 
-            if (CookiePassed(context))
-            {
-                sessionId = SessionIdFromCookie(context);
-            }
-            else
+            if (String.IsNullOrEmpty(sessionId))
             {
                 sessionId = NewSessionId();
                 var cookie = new NancyCookie(CookieName, sessionId, true);
                 context.Response.AddCookie(cookie);
             }
 
-            //todo: consider use custom ISession implementation
             var dict = new Dictionary<string, object>(session.Count);
             foreach (var kvp in session)
             {
@@ -63,19 +69,16 @@ namespace Nancy.Session
 
         public ISession Load(NancyContext context)
         {
-            if (!CookiePassed(context))
+            var sessionId = SessionIdFromCookie(context);
+
+            if (String.IsNullOrEmpty(sessionId) || !InStore(sessionId))
             {
-                return new Session();
+                var session = new Session();
+                OnSessionStart(session);
+                return session;
             }
 
-            var sessionId = SessionIdFromCookie(context);
-            var session = LoadFromStore(sessionId);
-            return new Session(session);
-        }
-
-        public bool Expired(NancyContext context)
-        {
-            return !CookiePassed(context) || _cache[SessionIdFromCookie(context)] == null;
+            return new Session(LoadFromStore(sessionId));
         }
 
         private IDictionary<string, object> LoadFromStore(string key)
@@ -102,14 +105,18 @@ namespace Nancy.Session
         }
 
 
-        private bool CookiePassed(NancyContext context)
+        private bool InStore(string sessionId)
         {
-            return context.Request.Cookies.ContainsKey(CookieName);
+            return _cache.Contains(sessionId) && _cache[sessionId] != null;
         }
 
         private string SessionIdFromCookie(NancyContext context)
         {
-            return context.Request.Cookies[CookieName];
+            if (context.Request.Cookies.ContainsKey(CookieName))
+            {
+                return context.Request.Cookies[CookieName];
+            }
+            return null;
         }
 
         private string NewSessionId()

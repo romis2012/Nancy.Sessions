@@ -5,11 +5,20 @@ namespace Nancy.Session
 {
     public class SessionManager
     {
-        
         private readonly ISessionProvider _provider;
-        //todo: consider delegate SessionStart responsibility to ISessionProvider
-        public event Action<ISession> SessionStart;
-        
+
+        public event Action<ISession> SessionStart
+        {
+            add
+            {
+                _provider.SessionStart += value;
+            }
+            remove
+            {
+                _provider.SessionStart -= value;
+            }
+        }
+
         public event Action<ISession> SessionEnd
         {
             add
@@ -31,17 +40,6 @@ namespace Nancy.Session
         {
             pipelines.BeforeRequest.AddItemToStartOfPipeline(LoadSession);
             pipelines.AfterRequest.AddItemToEndOfPipeline(SaveSession);
-            if (SessionStart != null)
-            {
-                pipelines.BeforeRequest.AddItemToEndOfPipeline(context =>
-                {
-                    if (_provider.Expired(context))
-                    {
-                        SessionStart(context.Request.Session);
-                    }
-                    return null;
-                });
-            }
         }
 
         private void SaveSession(NancyContext context)

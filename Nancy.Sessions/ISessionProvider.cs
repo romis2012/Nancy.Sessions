@@ -6,8 +6,7 @@ namespace Nancy.Session
     {
         void Save(NancyContext context);
         ISession Load(NancyContext context);
-        bool Expired(NancyContext context);
-
+        event Action<ISession> SessionStart;
         event Action<ISession> SessionEnd;
     }
 }
